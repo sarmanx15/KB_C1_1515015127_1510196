@@ -1,0 +1,294 @@
+/*
+Nama	: Muhammad Sarman Noorlah
+NIM	: 1515015127
+Kelas	: C1 2015
+
+*/
+
+DOMAINS
+/*
+Domain digunakan untuk memberikan nama yang berarti untuk domain, walaupun secara internal domain
+tersebut sama tipenya dengan domain yang telah ada, serta dapat digunakan untuk
+mendeklarasi domain khusus yang digunakan untuk mendeklarasikan struktur data
+yang tidak didefinisikan oleh standar domain. Dengan mendeklarasikan domain juga
+dapat mencegah kesalahan logika pada program */
+nama,jender,pekerjaan,benda,alasan,zat = symbol
+%nama, jender, pekerjaan, benda, alasan, dan zat adalah bertipedata symbol
+umur=integer
+%umur bertipe data integer
+
+PREDICATES
+/* Predicates digunakan untuk mendeklarasikan predikat yang akan digunakan pada section clauses */
+
+nondeterm orang(nama, umur, jender, pekerjaan)
+% Orang dengan Nama X berumur XX dengan Jender XXX mempunyai pekerjaan XXX ( non determ -> mempunyai kemungkinan jawaban lebih dari satu )
+nondeterm selingkuh(nama, nama)
+% Nama 1 selingkuh dengan nama 2 ( non determ -> mempunyai kemungkinan jawaban lebih dari satu )
+terbunuh_dengan(nama, benda)
+% Orang dengan nama A terbunuh dengan benda AB
+terbunuh(nama)
+% Orang dengan nama A terbunuh
+nondeterm pembunuh(nama)
+% nama C adalah pembunuh ( non determ -> mempunyai kemungkinan jawaban lebih dari satu )
+motif(alasan)
+% alasan ABC menjadi Motif Pembunuhan
+ternodai(nama, zat)
+% Nama D ternodai oleh zat X
+milik(nama, benda)
+% Nama A memilihi Benda X
+nondeterm cara_kerja_mirip(benda, benda)
+% Benda X memiliki Cara Kerja Mirip Dengan Benda XX ( nondeterm -> mempunyai kemungkinan jawaban lebih dari satu )
+nondeterm kemungkinan_milik(nama, benda)
+% Benda X kemungkinan milik nama XX ( nondeterm -> mempunyai kemungkinan jawaban lebih dari satu )
+nondeterm dicurigai(nama)
+% orang dengan nama X dicurigai ( nondeterm -> mempunyai kemungkinan jawaban lebih dari satu )
+%nondeterm berfungsi memberitahu compiler bahwa predikat mempunyai lebih dari satu kemungkinan jawaban
+
+/* * * Fakta-fakta tentang pembunuhan * * */
+
+CLAUSES
+/* section untuk meletakan fakta dan aturan */
+orang(budi,55,m,tukang_kayu).
+% orang dengan nama Budi berumur 55 tahun dengan jender male (laki-laki) dan pekerjaan sebagai tukang kayu
+orang(aldi,25,m,pemain_sepak_bola).
+% orang dengan nama aldi umur 25 tahun dengan jender male (laki-laki) dan pekerjaan sebagai pemain sepak bola
+orang(aldi,25,m,tukang_jagal).
+%orang dengan nama aldi berumur 25 tahun dengan jender male (laki-laki) dan pekerjaan sebagai tukang jagal
+orang(joni,25,m,pencopet).
+%orang dengan nama joni berumur 25 tahun dengan jender male (laki-laki) dan pekerjaan sebagai pencopet
+selingkuh(ina,joni).
+% ina selingkuh dengan joni
+selingkuh(ina,budi).
+% ina selingkuh dengan budi
+selingkuh(siti,joni).
+%siti selingkuh dengan joni
+terbunuh_dengan(siti,pentungan).
+% siti terbunuh dengan pentungan
+terbunuh(siti).
+% siti terbunuh
+motif(uang).
+% uang adalah motif
+motif(cemburu).
+% cemburu adalah motif
+motif(dendam).
+% dendam adalah motif
+ternodai(budi, darah).
+% budi ternodai oleh darah
+ternodai(siti, darah).
+%siti ternodai oleh darah
+ternodai(aldi, lumpur).
+% aldi ternodai oleh lumpur
+ternodai(joni, coklat).
+% joni ternodai oleh coklat
+ternodai(ina, coklat).
+% ina ternodai oleh coklat
+
+milik(budi,kaki_palsu).
+% kaki palsu milik budi
+milik(joni,pistol).
+% pistol milik joni
+
+/* * * Basis Pengetahuan * * */
+cara_kerja_mirip(kaki_palsu, pentungan).
+% kaki palsu memiliki cara kerja mirip dengan pentungan
+cara_kerja_mirip(balok, pentungan).
+% balok memuiliki cara kerja mirip pentungan
+cara_kerja_mirip(gunting, pisau).
+% gunting memiliki cara kerja mirip pisau
+cara_kerja_mirip(sepatu_bola, pentungan).
+% sepatu bola memiliki cara kerja mirip pentungan
+
+kemungkinan_milik(X,sepatu_bola):-
+orang(X,_,_,pemain_sepak_bola).
+% sepatu bole kemungkinan milik X jika X adalah orang yang memiliki pekerjaan sebagai pemain sepak bola
+/*
+ Klausa ini memiliki 1 syarat yang harus dipenuhi yaitu orang dengan pekerjaan pemain sepak bola
+ berdasarkan fakta didapatkan 1 hasil yaitu Aldi.
+ JADI KLAUSA INI MENEMUKAN 1 SOLUSI YAITU ALDI
+*/
+kemungkinan_milik(X,gunting):-
+orang(X,_,_,pekerja_salon).
+% gunting kemungkinan milik X jika x adalah orang yang memiliki pekerjaan sebagai pekerja salon
+/*
+ Klausa ini memiliki 1 syarat yang harus dipenuhi yaitu orang yang mempunyai pekerjaan salon
+ berdasarkan fakta yang ada, tidak ditemukan hasil untuk itu
+ JADI KLAUSA INI TIDAK MEMILIKI SOLUSI
+*/
+kemungkinan_milik(X,Benda):-
+milik(X,Benda).
+% benda kemungkinin milik X jika benda milik X
+/*
+ Klausa ini memiliki 1 syarat yang harus dipenuhi yaitu "X milik benda" ada 2 fakta yang sama dan prolog akan melakukan 2 kali tracking
+ tracking pertama, kaki palsu milik budi, fakta ini benar lalu prolog melakukan backtracking
+ backtracking pertama, pistol milik joni, fakta ini benar 
+ JADI PADA KLAUSA INI TERDAPAT 2 HASIL SOLUSI YAITU KAKI PALSU KEMUNGKINAN MILIK BUDI DAN PISTOL KEMUNGKINAN MILIK JONI
+*/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai semua orang yang memiliki senjata yang *
+* kerjanya mirip dengan senjata penyebab siti terbunuh. *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+dicurigai(X):-
+terbunuh_dengan(siti,Senjata) ,
+cara_kerja_mirip(Benda,Senjata) ,
+kemungkinan_milik(X,Benda).
+% X dicurigai Jika siti terbunuh dengan senjata dan benda memiliki cara kerja mirip senjata dan benda kemungkinan milik X
+
+/* Proses unifikasi pada klausa ini memiliki 3 syarat yang harus dipenuhi, dengan proses sebagai berikut
+   => tracking pertama
+              - syarat pertama "siti terbunuh dengan senjata" berdasarkan hasil unifikasi ditemukan fakta siti terbunuh dengan "PENTUNGAN"
+              - syarat kedua "benda cara kerja mirip senjata" berdasarkan hasil unifikasi ditemukan fakta "kaki palsu cara kerja mirip pentungan" fakta ini benar dan sama dengan syarat sebelumnya
+              - syarat ketiga "benda kemungkinan milik X" berdasarkan hasil unifikasi ditemukan fakta kaki palsu kemungkinan milik budi.
+              - ketiga syarat terpenuhi dan mendapatkan solusi budi dicurigai
+   => backtracking pertama
+              - syarat pertama "siti terbunuh dengan senjata" berdasarkan hasil unifikasi ditemukan fakta siti terbunuh dengan "PENTUNGAN"
+              - syarat kedua "benda cara kerja mirip senjata" berdasarkan hasil unifikasi ditemukan fakta berikutnya "balok cara kerja mirip pentungan" fakta ini benar dan sama dengan syarat sebelumnya
+              - syarat ketiga "benda kemungkinan milik X" berdasarkan hasil unifikasi tidak ditemukan fakta mengenai kepemilikan balok
+              - ketiga syarat ada yang tidak terpenuhi maka tidak ada solusi pada backtracking ini
+   => backracking kedua
+              - syarat pertama "siti terbunuh dengan senjata" berdasarkan hasil unifikasi ditemukan fakta siti terbunuh dengan "PENTUNGAN"
+              - syarat kedua "benda cara kerja mirip senjata" berdasarkan hasil unifikasi ditemukan fakta berikutnya "gunting cara kerja mirip pisau" fakta ini tidak sama dengan syarat sebelumnya
+              - syarat ketiga "benda kemungkinan milik X" berdasarkan hasil unifikasi tidak ditemukan fakta mengenai kepemilikan gunting
+              - ketiga syarat ada yang tidak terpenuhi maka tidak ada solusi pada backtracking ini
+   => backracking ketiga
+              - syarat pertama "siti terbunuh dengan senjata" berdasarkan hasil unifikasi ditemukan fakta siti terbunuh dengan "PENTUNGAN"
+              - syarat kedua "benda cara kerja mirip senjata" berdasarkan hasil unifikasi ditemukan fakta berikutnya "sepatu bola cara kerja mirip pentungan" fakta ini benar dan sama dengan syarat sebelumnya
+              - syarat ketiga "benda kemungkinan milik X" berdasarkan hasil unifikasi ditemukan fakta berikutnya sepatu bola kemungkinan milik aldi
+              - ketiga syarat terpenuhi maka ditemukan solusi pada backtracking ini aldi dicurigai
+
+ JADI PADA KLAUSA INI DIDAPATKAN 2 SOLUSI YANG DICURIGAI ADALAH BUDI DAN ALDI
+*/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai laki-laki yang selingkuh dengan siti. *
+* * * * * * * * * * * * * * * * * * * * * * * * * */
+dicurigai(X):-
+motif(cemburu),
+orang(X,_,m,_),
+selingkuh(siti,X).
+% X dicurigai jika mempunyai motif cemburu dan X adalah male (laki-laki) dan siti selingkuh dengan X
+/*
+ Proses unifikasi pada klausa ini mempunyai 3 syarat yang harus dipenuhi,dengan proses sabagai berikut:
+ => tracking pertama
+             - syarat pertama "motif cemburu" berdasarkan hasil unifikasi ditemukan fakta tersebut.
+             - syarat kedua "orang X dengan jender m" orang dengan jender m(laki-laki) berdasarkan hasil unifikasi ditemukan fakta budi orang dengan jender m.
+             - syarat yang ketiga "siti selingkuh dengan X" tidak ditemukan fakta mengenai hal ini.
+             - ketiga syarat ada yang tidak terpenuhi maka tracking ini tidak menemukan solusi.
+ => backtracking pertama
+             - syarat pertama "motif cemburu" berdasarkan hasil unifikasi ditemukan fakta tersebut.
+             - syarat kedua "orang X dengan jender m" orang dengan jender m(laki-laki) berdasarkan hasil unifikasi ditemukan fakta aldi orang dengan jender m.
+             - syarat yang ketiga "siti selingkuh dengan X" tidak ditemukan fakta mengenai hal ini.
+             - ketiga syarat ada yang tidak terpenuhi maka backtracking ini tidak menemukan solusi.
+ => backtracking kedua
+             - syarat pertama "motif cemburu" berdasarkan hasil unifikasi ditemukan fakta tersebut.
+             - syarat kedua "orang X dengan jender m" orang dengan jender m(laki-laki) berdasarkan hasil unifikasi ditemukan fakta aldi orang dengan jender m.
+             - syarat yang ketiga "siti selingkuh dengan X" tidak ditemukan fakta mengenai hal ini.
+             - ketiga syarat ada yang tidak terpenuhi maka backtracking ini tidak menemukan solusi. 
+ => backtracking ketiga
+             - syarat pertama "motif cemburu" berdasarkan hasil unifikasi ditemukan fakta tersebut.
+             - syarat kedua "orang X dengan jender m" orang dengan jender m(laki-laki) berdasarkan hasil unifikasi ditemukan fakta joni orang dengan jender m.
+             - syarat yang ketiga "siti selingkuh dengan X" berdasarkan unifikasi ditemukan fakta yang ada siti selingkuh dengan joni.
+             - ketiga syarat maka backtracking ini tidak solusi.            
+
+ JADI PADA KLAUSA INI DIDAPATKAN 1 SOLUSI YANG  DICURIGAI ADALAH JONI
+*/
+
+/* * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai perempuan yang selingkuh dengan *
+* laki-laki yang juga selingkuh dengan siti *
+* * * * * * * * * * * * * * * * * * * * * * */
+dicurigai(X):-
+motif(cemburu),
+orang(X,_,f,_),
+selingkuh(X,Lakilaki),
+selingkuh(siti,Lakilaki).
+/* X dicurigai jika mempunyai motif cemburu dan X adalah Female (perempuan) dan X selingkuh dengan seorang 
+laki-laki dan siti selingkuh dengan laki-laki tersebut */
+/*
+ Proses unifikasi pada klausa ini mempunyai 4 syarat yang harus dipenuhi
+ => tracking pertama
+            - syarat pertama "motif cemburu" berdasarkan hasil unifikasi ditemukan fakta tersebut.
+            - syarat kedua "orang X dengan jender f(perempuan" berdasarkan hasil unifikasi tidak ditemukan fakta tersebut.
+            - syarat ketiga "X selingkuh dengan laki-laki" berdasarkan hasil unifikasi tidak ditemukan fakta tersebut.
+            - syarat keempat "siti selingkuh dengan laki-laki" berdasarkan hasil unifikasi tidak ditemukan fakta tersebut.
+            - banyak syarat yang tidak terpenuhi, tracking tidak menemukan solusi.
+ JADI PADA KLAUSA INI TIDAK DITEMUKAN HASIL
+*/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* dicurigai pencopet yang mempunyai motif uang. *
+* * * * * * * * * * * * * * * * * * * * * * * * * * */
+dicurigai(X):-
+motif(uang),
+orang(X,_,_,pencopet).
+% X dicurigai mempunyai motif uang dan X adalah pencopet
+/*
+ Proses unifikasi pada klausa ini memiliki 2 syarat yang harus dipenuhi,
+ => tracking pertama
+           - syarat pertama "motif uang" berdasarkan hasil unifikasi ditemukan fakta tersebut.
+           - syarat kedua "orang x dengan pekerjaan pencopet" berdasarkan hasil unifikasi ditemukan fakta orang dengan nama Joni dengan pekerjaan pencopet
+           - kedua syarat terpenuhi dan didapatkan hasil solusi dari tracking ini
+ JADI PADA KLAUSA INI DIPEROLEH 1 SOLUSI YAITU JONI
+*/
+
+pembunuh(Pembunuh):-
+orang(Pembunuh,_,_,_),
+terbunuh(Terbunuh),
+Terbunuh <> Pembunuh, /* Bukan bunuh diri */
+dicurigai(Pembunuh),
+ternodai(Pembunuh,Zat),
+ternodai(Terbunuh,Zat).
+/* Pembunuhnya adalah pembunuh jika Pembunuh adalah orang dan terbunuh adalah terbunuh dan bukan bunuh diri 
+dan Pembunuh dicurigai dan pembunuh ternodai oleh zat dan yang terbunuh ternodai oleh zat yang sama dengan pembunuh */
+/*
+ Proses unifikasi pada tahap ini terdapat 6 syarat yang harus terpenuhi, dengan proses sebagai berikut:
+ => tracking pertama, 
+             pada syarat ditemukan fakta "orang dengan nama budi", berhasil dan 
+             lanjut ke syarat kedua "yang terbunuh adalah siti" fakta ditemukan dan
+             lanjut ke syarat berikutnya "budi bukan siti" fakta ini benar, 
+             lanjut ke syarat berikutnya "budi dicurigai" fakta ini benar pada unifikasi sebelumnya,
+             lanjut  ke syarat "budi ternodai zat" berdasarkan fakta yang ada budi ternodai oleh "darah"
+             lanjut ke syarat "siti ternodai oleh zat" berdasarkan fakta yang ada siti ternodai oleh "darah" 
+             berdasarkan syarat yang ada budi dan siti ternodai oleh zat yang sama maka budi memenuhi syarat sebagai pembunuh, 
+             lalu prolog akan melalukan backtracking untuk mencari hasil solusi yang lainya
+ => backtracking pertama
+             pada syarat ditemukan fakta "orang dengan nama aldi", berhasil dan 
+             lanjut ke syarat kedua "yang terbunuh adalah siti" fakta ditemukan dan
+             lanjut ke syarat berikutnya "aldi bukan siti" fakta ini benar, 
+             lanjut ke syarat berikutnya "aldi dicurigai" fakta ini benar pada unifikasi sebelumnya,
+             lanjut  ke syarat "aldi ternodai zat" berdasarkan fakta yang ada budi ternodai oleh "lumpur"
+             lanjut ke syarat "siti ternodai oleh zat" berdasarkan fakta yang ada siti ternodai oleh "darah" 
+             berdasarkan syarat yang ada aldi dan siti TIDAK ternodai oleh zat yang sama maka aldi tidak memenuhi syarat sebagai pembunuh
+             lalu prolog akan melakukan backtracking lagi untuk solusi lainnya
+ => backtracking kedua
+             pada syarat ditemukan fakta "orang dengan nama aldi", berhasil dan 
+             lanjut ke syarat kedua "yang terbunuh adalah siti" fakta ditemukan dan
+             lanjut ke syarat berikutnya "aldi bukan siti" fakta ini benar, 
+             lanjut ke syarat berikutnya "aldi dicurigai" fakta ini benar pada unifikasi sebelumnya,
+             lanjut  ke syarat "aldi ternodai zat" berdasarkan fakta yang ada budi ternodai oleh "lumpur"
+             lanjut ke syarat "siti ternodai oleh zat" berdasarkan fakta yang ada siti ternodai oleh "darah" 
+             berdasarkan syarat yang ada aldi dan siti TIDAK ternodai oleh zat yang sama maka aldi tidak memenuhi syarat sebagai pembunuh
+             lalu prolog akan melakukan backtracking lagi untuk solusi lainnya
+ => backtracking ketiga
+             pada syarat ditemukan fakta "orang dengan nama joni", berhasil dan 
+             lanjut ke syarat kedua "yang terbunuh adalah siti" fakta ditemukan dan
+             lanjut ke syarat berikutnya "joni bukan siti" fakta ini benar, 
+             lanjut ke syarat berikutnya "joni dicurigai" fakta ini benar pada unifikasi sebelumnya,
+             lanjut  ke syarat "joni ternodai zat" berdasarkan fakta yang ada budi ternodai oleh "coklat"
+             lanjut ke syarat "siti ternodai oleh zat" berdasarkan fakta yang ada siti ternodai oleh "darah" 
+             berdasarkan syarat yang ada joni dan siti TIDAK ternodai oleh zat yang sama maka joni tidak memenuhi syarat sebagai pembunuh
+
+ JADI PADA KLAUSA INI DIDAPATKAN 1 SOLUSI PEMBUNUH ADALAH BUDI
+*/
+GOAL
+/*  section goal sama dengan body dari sebuah aturan (rule),
+yaitu sederetan sub-sub goal. Perbedaan antara section goal dengan suatu aturan
+adalah setelah kata kunci goal tidak diikuti tanda :- dan Visual Prolog secara
+otomatis mengeksekusi goal ketika program dijalankan */
+
+pembunuh(X).
+% X adalah pembunuh
+/*
+ Proses unifikasi pada goal ini mendapatkan 1 predikat pada klausa yang sama dengan hasil pembunuh adalah budi
+ JADI PADA GOAL INI DIDAPATKAN HASIL PADA GOAL INI BUDI SEBAGAI PEMBUNUH
+ */

@@ -1,0 +1,102 @@
+/*
+Nama : Muhammad Sarman Noorlah
+NIM  : 1515015127
+Kelas: C1 2015
+*/
+
+DOMAINS
+/*
+Domain digunakan untuk memberikan nama yang berarti untuk domain, walaupun secara internal domain
+tersebut sama tipenya dengan domain yang telah ada, serta dapat digunakan untuk
+mendeklarasi domain khusus yang digunakan untuk mendeklarasikan struktur data
+yang tidak didefinisikan oleh standar domain. Dengan mendeklarasikan domain juga
+dapat mencegah kesalahan logika pada program */
+nama = orang(symbol,symbol) /* (Pertama , Kedua) didalam variable nama terdapat variable lagi, yaitu orang yang terdiri dari dua tipe data string*/
+hari_lahir = tanggal_lahir(integer,symbol,integer) /* (Hari, Bulan, Tahun) didalam variabel hari_lahir terdapat variabel tanggal_lahir yang terdiri dari tiga tipe data integer, symbol, dan integer*/
+telepon = symbol /* Nomor telepon  variable telepon dengan tipe data symbol*/
+
+PREDICATES
+nondeterm daftar_telepon(nama,symbol,hari_lahir) /*daftar telepon yang terdiri dari nama, symbol dan hari_lahir*/
+nondeterm yang_ulang_tahun_bulan_ini /*yang_ulang_tahun_bulan_ini tidak memiliki parameter*/
+konversi_bulan(symbol,integer) /*symbol dikonversikan ke integer*/
+cek_bulan_ulang_tahun(integer,hari_lahir)/*cek_bulan_ulang_tahun dengan parameter bertipe integer dan variable hari_lahir*/
+cetak_orang(nama) /*cetak_nama dengan variable nama*/
+
+CLAUSES
+yang_ulang_tahun_bulan_ini:-
+write("**** Daftar Orang Yang Ulang Tahun Bulan Ini ****"),nl,
+write(" Nama Pertama\t\t Nama Kedua\n"),
+write("******************************************************"),nl,
+date(_, Bulan_ini, _), /* Ambil bulan pada sistem komputer */
+daftar_telepon(Orang, _, Tanggal),
+cek_bulan_ulang_tahun(Bulan_ini, Tanggal),
+cetak_orang(Orang),
+fail.
+/*Klausa ini mempunyai 7 syarat yang harus dipenuhi
+- syarat 1, 2 dan 3 pertama menampilkan baris argumen yang terdapat pada fungsi write
+- syarat 4 memberikan nilai pada variabel Bulan_ini dengan mengambil data bulan pada sistem komputer
+- syarat 5 daftar_telepon dengan mengambil variabel orang dan tanggal
+- syarat 6 cek_bulan_ulang_tahun dengan parameter bulan_ini dan Tanggal yang di cocokan dengan bariabel dari syarat sebelumnya
+- syarat 7 cetak_orang untuk menampilkan nama pertama dan kedua
+- fail untuk memaksakan lacak balik walaupun telah didapatkan solusi */
+
+yang_ulang_tahun_bulan_ini:-
+write("\n\n Tekan sembarang tombol..."),nl,
+readchar(_).
+/*klausa ini memiliki 3 syarat yaitu "write" akan menampilkan argumen yang ada pada funsi tersebut, "nl" akan membuat baris baru, "readchar" akan menerima inputan*/
+
+cetak_orang(orang(Pertama,Kedua)):-
+write(" ",Pertama,"\t\t\t ",Kedua),nl.
+/* klausa ini memiliki data objek jamak yaitu orang yang memiliki 2 variable Pertama dan Kedua. dan memiliki syarat "write" yang akan menampilkan isi variable Pertama dan Kedua yang didapat dari data jamak klausa ini, "nl" untuk baris baru*/
+
+cek_bulan_ulang_tahun(Bul,tanggal_lahir(_,Bulan,_)):-
+konversi_bulan(Bulan,Bulan1),
+Bul = Bulan1.
+/*klausa ini memiliki 2 parameter berupa data objek sederhana dengan variable "Bil" dan jamak, data objek jamak dengan 1 parameter yaitu variable Bulan.
+- syarat pertama "konversi_bulan" dengan 2 parameter bulan dan bulan1
+- syarat kedua memberikan nilai Bul dengan isi dari variable bulan1 */
+
+daftar_telepon(orang(erwin,effendy),"767-8463",tanggal_lahir(3,jan,1955)). 
+daftar_telepon(orang(pramudya,kurniawan),"438-8400",tanggal_lahir(5,feb,1985)).
+daftar_telepon(orang(kusdiar,prihatin),"555-5653",tanggal_lahir(3,mar, 1935)).
+daftar_telepon(orang(ui,yansen),"767-2223",tanggal_lahir(29,apr,1951)).
+daftar_telepon(orang(roland,hutagalung),"555-1212",tanggal_lahir(12,may,1962)).
+daftar_telepon(orang(andi,nuruddin),"438-8400",tanggal_lahir(17,jun,1980)).
+daftar_telepon(orang(syarif,musadek),"767-8463",tanggal_lahir(20,jun,1986)).
+daftar_telepon(orang(lidya,widyawati),"555-5653",tanggal_lahir(16,jul,1981)).
+daftar_telepon(orang(yusida,andriani),"767-2223",tanggal_lahir(10,aug,1981)).
+daftar_telepon(orang(slamet,riyadi),"438-8400",tanggal_lahir(25,sep,1981)).
+daftar_telepon(orang(nur,harjanto),"438-8400",tanggal_lahir(20,oct,1952)).
+daftar_telepon(orang(dian,marlini),"555-1212",tanggal_lahir(9,nov,1984)).
+daftar_telepon(orang(teguh,heni),"767-2223",tanggal_lahir(15,nov,1987)).
+daftar_telepon(orang(eka,ardiyanti),"438-8400",tanggal_lahir(31,dec,1981)).
+
+konversi_bulan(jan, 1). /*jan konversi bulan 1*/
+konversi_bulan(feb, 2). /*feb konversi bulan 2*/
+konversi_bulan(mar, 3). /*mar konversi bulan 3*/
+konversi_bulan(apr, 4). /*apr konversi bulan 4*/
+konversi_bulan(may, 5). /*may konversi bulan 5*/
+konversi_bulan(jun, 6). /*jun konversi bulan 6*/
+konversi_bulan(jul, 7). /*jul konversi bulan 7*/
+konversi_bulan(aug, 8). /*aug konversi bulan 8*/
+konversi_bulan(sep, 9). /*sep konversi bulan 9*/
+konversi_bulan(oct, 10). /*oct konversi bulan 10*/
+konversi_bulan(nov, 11). /*nov konversi bulan 11*/
+konversi_bulan(dec, 12). /*dec konversi bulan 12*/
+
+GOAL
+yang_ulang_tahun_bulan_ini.
+/*
+ketika program dijalankan visual prolog akan memanggil goal yang_ulang_tahun_bulan_ini kemudian melakukan unifikasi dengan klausa yang ada, 
+untuk klausa pertama, dengann beberapa syarat yang ada maka akan dilakukan pencarian data yang cocok dengan data yang ada, 
+- untuk syarat pertama sampai ketiga tidak dilakukan pencocokan karena hanya menampilkan argumen
+- syarat selanjutnya date akan mengambil data bulan dari sistem komputer kkita kemudian memberikan nilainya pada variable Bulan_ini.
+- syarat selanjutnya daftar_telepon akan melakukan pencocokan dengan data yang ada
+- syarat selanjutnya cek_bulan_ulang_tahun dengan 2 parameter yaitu bulan_ini yang isinya april, tanggal yang isinya disamakan dengan nilai dari variabel tanggal dari syarat sebelumnya yang memenuhi
+- syarat selanjutnya yaitu cetak_orang akan mengambil nilai dari orang pada parameter sebelumnya
+- fail untuk memaksakan lacak balik walaupun telah didapatkan solusi
+
+karena data yang lahir pada bulan april hanya satu, maka akan ditampilka ui yansen sebagai solusi
+
+untuk klausa kedua hanya dijadikan sebagai konfirmasi dengan menekan tombol sembarang pada keyboard
+*/
